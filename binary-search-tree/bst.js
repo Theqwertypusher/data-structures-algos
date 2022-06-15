@@ -10,6 +10,8 @@ AVGERAGE: O(logn) because of recursion however if unbalanced
 WORST: O(n) BST could degenerate with only 1 branch - basically a linked list 
 - space complexity: 
 WORST: O(n)
+- All recursive calls need to save the results somewhere - if they are to be returned 
+e.g. deletion recursive method
 */
 
 class Node {
@@ -69,6 +71,52 @@ class BST {
     should be checking left and right values 
     can be achieved without using any functions - just a while loops
     */
+  };
+
+  remove = (data) => {
+    const node = this.root;
+    if (!node) return null;
+
+    /* 
+    // recurse function used to traverse tree for target node
+    // target node has 3 different usecases
+        // no children (leaf node) - easiest deletion - no relink
+        // 1 child 
+        // 2 children 
+            // requires identiyfing min value of right subTree 
+            // then overwriting target node with min value
+            // now two nodes with duplicate values
+            // calling removeNode with the min value as the target 
+            // will remove dup */
+
+    const removeNode = (node, data) => {
+      if (data < node.data) {
+        node.left = removeNode(node.left, data);
+        return node;
+      } else if (data > node.data) {
+        node.right = removeNode(node.right, data);
+        return node;
+      } else {
+        if (!node.left && !node.right) {
+          node = null;
+          return node;
+        }
+        if (!node.left) {
+          node = node.right;
+          return node;
+        }
+        if (!node.right) {
+          node = node.left;
+          return node;
+        }
+
+        let min = this.min(node.right);
+        node.data = min.data;
+        node.right = removeNode(node.right, min.data);
+        return node;
+      }
+    };
+    this.root = removeNode(this.root, data);
   };
 
   insert = (data) => {
@@ -171,4 +219,7 @@ console.log(bst.max());
 console.log(bst.dfsInOrder());
 console.log(bst.dfsPreOrder());
 console.log(bst.dfsPostOrder());
+console.log(bst.bfs());
+bst.remove(12);
+bst.remove(36);
 console.log(bst.bfs());
